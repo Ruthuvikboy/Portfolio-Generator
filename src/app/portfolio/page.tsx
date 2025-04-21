@@ -32,9 +32,13 @@ const PortfolioPage = () => {
   const downloadPdf = () => {
     const doc = new jsPDF();
 
+    // Set background color
+    doc.setFillColor(34, 41, 55); // Assuming this is your dark blue background color
+    doc.rect(0, 0, doc.internal.pageSize.getWidth(), doc.internal.pageSize.getHeight(), 'F');
+
     // Set font and color
     doc.setFont('helvetica', 'normal');
-    doc.setTextColor(31, 115, 183);
+    doc.setTextColor(160, 210, 255); // Bright Sky Blue
 
     // Add name in larger font size
     doc.setFontSize(32);
@@ -42,7 +46,7 @@ const PortfolioPage = () => {
 
     // Reset font size and color
     doc.setFontSize(12);
-    doc.setTextColor(31, 115, 183);
+    doc.setTextColor(160, 210, 255); // Bright Sky Blue
     doc.text(occupation, 14, 28);
     doc.text(`Age: ${age}`, 14, 34);
     doc.text(`Contact: ${contactInformation}`, 14, 40);
@@ -63,13 +67,13 @@ const PortfolioPage = () => {
     // Add "Projects" section
     doc.setFontSize(16);
     doc.text('Projects', 14, 100);
-    let y = 106;
+    let y = 110; // Start position
     projects.forEach((project: any) => {
       doc.setFontSize(14);
       doc.text(project.name, 14, y);
       doc.setFontSize(12);
       doc.text(project.description, 14, y + 6, {maxWidth: 180});
-      y += 20;
+      y += 30; // Increase spacing between projects
     });
 
     // Add photo
