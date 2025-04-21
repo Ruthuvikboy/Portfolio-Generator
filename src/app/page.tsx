@@ -16,7 +16,7 @@ const initialFormData = {
   contactInformation: '',
   shortBio: '',
   skills: '',
-  projectDescriptions: '',
+  projects: [{name: '', description: ''}],
   photo: null,
 };
 
@@ -30,11 +30,20 @@ export default function HomePage() {
     setFormData({...formData, [name]: value});
   };
 
+  const handleProjectChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const {name, value} = e.target;
+    const projects = [...formData.projects];
+    projects[index][name] = value;
+    setFormData({...formData, projects});
+  };
+
+  const addProject = () => {
+    setFormData({...formData, projects: [...formData.projects, {name: '', description: ''}]});
+  };
+
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      // setFormData({...formData, photo: URL.createObjectURL(file)});
-      // setFormData({...formData, photo: file}); // to upload directly, change type of photo in initialFormData
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData({...formData, photo: reader.result});
@@ -46,7 +55,7 @@ export default function HomePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.age || !formData.occupation || !formData.contactInformation || !formData.shortBio || !formData.skills || !formData.projectDescriptions || !formData.photo) {
+    if (!formData.name || !formData.age || !formData.occupation || !formData.contactInformation || !formData.shortBio || !formData.skills || !formData.photo) {
       toast({
         title: 'Error',
         description: 'Please fill in all fields and upload a photo.',
@@ -56,15 +65,12 @@ export default function HomePage() {
     }
 
     try {
-      // Convert skills and project descriptions to arrays
       const skillsArray = formData.skills.split(',').map(skill => skill.trim());
-      const projectDescriptionsArray = formData.projectDescriptions.split('\n').map(desc => desc.trim());
 
       // Store form data in local storage
       localStorage.setItem('portfolioData', JSON.stringify({
         ...formData,
         skills: skillsArray,
-        projectDescriptions: projectDescriptionsArray,
       }));
 
       toast({
@@ -117,17 +123,35 @@ export default function HomePage() {
               <Label htmlFor="skills">Skills (comma-separated)</Label>
               <Input id="skills" name="skills" value={formData.skills} onChange={handleChange} required />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="projectDescriptions">Project Descriptions (one per line)</Label>
-              <Textarea
-                id="projectDescriptions"
-                name="projectDescriptions"
-                value={formData.projectDescriptions}
-                onChange={handleChange}
-                className="min-h-[100px]"
-                required
-              />
-            </div>
+
+            {formData.projects.map((project, index) => (
+              <div key={index} className="grid gap-4 border p-4 rounded-md">
+                <h3 className="text-lg font-semibold">Project {index + 1}</h3>
+                <div className="grid gap-2">
+                  <Label htmlFor={`projectName-${index}`}>Project Name</Label>
+                  <Input
+                    id={`projectName-${index}`}
+                    name="name"
+                    value={project.name}
+                    onChange={(e) => handleProjectChange(index, e)}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor={`projectDescription-${index}`}>Project Description</Label>
+                  <Textarea
+                    id={`projectDescription-${index}`}
+                    name="description"
+                    value={project.description}
+                    onChange={(e) => handleProjectChange(index, e)}
+                    className="min-h-[80px]"
+                    required
+                  />
+                </div>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" onClick={addProject}>Add Project</Button>
+
             <div className="grid gap-2">
               <Label htmlFor="photo">Photo</Label>
               <Input type="file" id="photo" name="photo" accept="image/*" onChange={handlePhotoChange} required />
