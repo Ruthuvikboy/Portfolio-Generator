@@ -125,12 +125,16 @@ const PortfolioPage = () => {
             <section>
               <h2 className="text-xl font-semibold mb-2 text-foreground">Projects</h2>
               <Accordion type="single" collapsible>
-                {projects.map((project: any, index: number) => (
-                  <AccordionItem key={index} value={`project-${index}`}>
-                    <AccordionTrigger className="text-left text-lg font-medium text-foreground">{project.name}</AccordionTrigger>
-                    <AccordionContent className="text-foreground">{project.description}</AccordionContent>
-                  </AccordionItem>
-                ))}
+                {projects && projects.length > 0 ? (
+                  projects.map((project: any, index: number) => (
+                    <AccordionItem key={index} value={`project-${index}`}>
+                      <AccordionTrigger className="text-left text-lg font-medium text-foreground">{project.name}</AccordionTrigger>
+                      <AccordionContent className="text-foreground">{project.description}</AccordionContent>
+                    </AccordionItem>
+                  ))
+                ) : (
+                  <p className="text-foreground">No projects added yet.</p>
+                )}
               </Accordion>
             </section>
           </CardContent>
